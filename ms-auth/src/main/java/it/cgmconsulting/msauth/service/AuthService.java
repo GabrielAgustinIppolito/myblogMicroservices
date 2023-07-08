@@ -2,9 +2,11 @@ package it.cgmconsulting.msauth.service;
 
 import it.cgmconsulting.msauth.entity.Authority;
 import it.cgmconsulting.msauth.entity.User;
+import it.cgmconsulting.msauth.exception.ResourceNotFoundException;
 import it.cgmconsulting.msauth.payload.request.ChangeRoleRequest;
 import it.cgmconsulting.msauth.payload.request.SignInRequest;
 import it.cgmconsulting.msauth.payload.request.SignUpRequest;
+import it.cgmconsulting.msauth.payload.response.UserResponse;
 import it.cgmconsulting.msauth.payload.response.JwtAuthenticationResponse;
 import it.cgmconsulting.msauth.repository.AuthorityRepository;
 import it.cgmconsulting.msauth.repository.UserRepository;
@@ -13,7 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -70,9 +74,10 @@ public class AuthService {
     }
 
 
-    public ResponseEntity<?> changeRoles(ChangeRoleRequest request, String adminUseId) {
+    @Transactional
+    public ResponseEntity<?> changeRoles(ChangeRoleRequest request, long adminUseId) {
 
-        if (request.getId() == Long.parseLong(adminUseId)) {
+        if (request.getId() == adminUseId) {
             return new ResponseEntity<>("Admin cannot change his own roles", HttpStatus.FORBIDDEN);
         }
 
@@ -81,12 +86,32 @@ public class AuthService {
             return new ResponseEntity<>("No valid authority selected", HttpStatus.BAD_REQUEST);
         }
 
-        Optional<User> u = userRepository.findById(request.getId());
-        if (u.isEmpty()) {
-            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
-        }
-        u.get().setAuthorities(authorities);
-        userRepository.save(u.get());
+//        Optional<User> u = userRepository.findById(request.getId());
+        User u = findByIdAndEnabledTrue(request.getId());
+//        if (u.isEmpty()) {
+//            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+//        }
+        u.setAuthorities(authorities);
+        userRepository.save(u);
         return new ResponseEntity<>("Roles updated succesfuly", HttpStatus.OK);
+    }
+
+    protected User findUserById(long userId){
+        User u = userRepository.findById(userId)
+                .orElseThrow(()-> new ResourceNotFoundException("User", "id", userId));
+        return u;
+    }
+    protected User findByIdAndEnabledTrue(long userId){
+        User u = userRepository.findByIdAndEnabledTrue(userId)
+                .orElseThrow(()-> new ResourceNotFoundException("User", "id", userId));
+        return u;
+    }
+
+    public String getUserName(long userId){
+        return  userRepository.getUsername(userId);
+    }
+
+    public List<UserResponse> getUsersByRole(String role) {
+        return userRepository.getUsersByRole(role);
     }
 }

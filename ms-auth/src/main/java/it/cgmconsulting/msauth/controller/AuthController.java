@@ -20,19 +20,19 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping("signup") // localhost:8090/ms-auth/signup
+    @PostMapping("v0/signup") // localhost:8090/ms-auth/signup
     public ResponseEntity<?> signup(@RequestBody @Valid SignUpRequest request){
         return authService.signup(request);
     }
 
-    @PostMapping("signin") // localhost:8081/ms-auth/signin
+    @PostMapping("v0/signin") // localhost:8081/ms-auth/signin
     public ResponseEntity<?> signin(@RequestBody @Valid SignInRequest request){
         return authService.signin(request);
     }
 
     @PutMapping("/v1/change-roles")
     public ResponseEntity<?> changeRole(@RequestBody @Valid ChangeRoleRequest request,
-                                        @RequestHeader("userId") String adminUseId){
+                                        @RequestHeader("userId") long adminUseId){
         return authService.changeRoles(request, adminUseId);
     }
 
