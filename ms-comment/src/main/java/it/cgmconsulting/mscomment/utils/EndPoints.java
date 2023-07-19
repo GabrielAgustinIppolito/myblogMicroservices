@@ -1,4 +1,4 @@
-package it.cgmconsulting.mspost.utils;
+package it.cgmconsulting.mscomment.utils;
 
 public class EndPoints {
     public final static String GATEWAY = "http://localhost:8090";

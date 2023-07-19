@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter @Setter @NoArgsConstructor
 public class PostResponse {
@@ -16,6 +17,8 @@ public class PostResponse {
     private LocalDateTime publishedAt;
     private long authorId;
     private String author;
+    private Set<String> categories;
+    private double avgRating;
 
     public PostResponse(long id, String title, String content, LocalDateTime publishedAt, long authorId) {
         this.id = id;
@@ -23,5 +26,13 @@ public class PostResponse {
         this.content = content;
         this.publishedAt = publishedAt;
         this.authorId = authorId;
+    }
+    public PostResponse(long id, String title, String content, LocalDateTime publishedAt, long authorId, Set<String> categories) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.publishedAt = publishedAt;
+        this.authorId = authorId;
+        this.categories = categories;
     }
 }

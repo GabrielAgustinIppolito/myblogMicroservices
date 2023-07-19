@@ -11,7 +11,7 @@ public class RouteValidator {
 //    public static final String openApiEndpoint = "v0"; //indica la chiamata che non ha bisogno autenticazione
 
     public boolean isOpenEndpoint(ServerHttpRequest request){
-        return request.getURI().getPath().contains("v0");
+        return request.getURI().getPath().contains("v0") || request.getURI().getPath().contains("actuator");
     }
 
 }

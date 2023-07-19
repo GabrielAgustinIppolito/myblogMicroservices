@@ -42,6 +42,10 @@ public class PostController {
         return postService.getAllPublishedPost();
     }
 
+    @GetMapping("v0/find-post-by-category")
+    public ResponseEntity<?> findPostsByCategory(@RequestParam String categoryName){
+        return postService.findPostsByCategory(categoryName);
+    }
 
 
 }
